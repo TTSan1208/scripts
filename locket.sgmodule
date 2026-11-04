@@ -1,16 +1,19 @@
 #!name=Locket Gold (Personal)
-#!desc=Mở khóa Locket Gold trọn đời, chặn quảng cáo, mở giới hạn camera 30s. Module được lưu trữ trên kho cá nhân.
-#!system=ios
+#!desc=Module cấu hình Locket Gold cá nhân - Tích hợp toàn bộ Caption và mở khóa 30s.
+# 🚀 Host by: TTSan1208
+
+[General]
+user-agent = Locket/1.0.0 (iPhone; iOS 26.3; Scale/3.00)
 
 [Script]
-# Xóa ETag để tránh lấy cache cũ
-Locket_Req = type=http-request, pattern=^https:\/\/api\.revenuecat\.com\/v1\/(receipts|subscribers)\/, script-path=https://raw.githubusercontent.com/TTSan1208/scripts/main/locket.js, requires-body=0
+# RevenueCat Response (Ép gói Gold)
+Locket_Gold = type=http-response, pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$), script-path=https://raw.githubusercontent.com/TTSan1208/scripts/main/locket.js, requires-body=true, max-size=-1, timeout=60
 
-# Chặn phản hồi thật, trả về gói Gold
-Locket_Gold = type=http-response, pattern=^https:\/\/api\.revenuecat\.com\/v1\/(receipts|subscribers)\/, requires-body=1, max-size=0, script-path=https://raw.githubusercontent.com/TTSan1208/scripts/main/locket.js
+# RevenueCat Request Header (Xóa ETag)
+Locket_Req = type=http-request, pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers), script-path=https://raw.githubusercontent.com/TTSan1208/scripts/main/locket.js, timeout=60
 
-# Mở khóa tính năng ẩn (Firebase)
-Locket_Features = type=http-response, pattern=^https:\/\/firebaseremoteconfig\.googleapis\.com\/v1\/projects\/locket-img\/namespaces\/firebase:fetch, requires-body=1, max-size=0, script-path=https://raw.githubusercontent.com/TTSan1208/scripts/main/locket.js
+# Locket Firebase Remote Config (Mở khóa tính năng & Captions)
+Locket_Features = type=http-response, pattern=^https:\/\/firebaseremoteconfig\.googleapis\.com\/v1\/projects\/locket-.+\/.+, script-path=https://raw.githubusercontent.com/TTSan1208/scripts/main/locket.js, requires-body=true, max-size=-1, timeout=60
 
 [MITM]
 hostname = %APPEND% api.revenuecat.com, firebaseremoteconfig.googleapis.com
